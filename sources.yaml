@@ -1,0 +1,170 @@
+sources:
+- company: "NVIDIA Corporation"
+  ticker: "NVDA"
+  urls:
+    - "https://investor.nvidia.com/financial-info/quarterly-results/default.aspx"
+
+- company: "Advanced Micro Devices"
+  ticker: "AMD"
+  urls:
+    - "https://ir.amd.com/financial-information/financial-results"
+  
+- company: "Microsoft Corporation"
+  ticker: "MSFT"
+  urls:
+    - "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q2/press-release-webcast"
+  
+- company: "Apple Inc."
+  ticker: "AAPL"
+  urls:
+    - "https://www.apple.com/investor/earnings-call/"
+  
+- company: "Alphabet Inc."
+  ticker: "GOOGL"
+  urls:
+    - "https://abc.xyz/investor/earnings/"
+  
+- company: "Amazon.com Inc."
+  ticker: "AMZN"
+  urls:
+    - "https://ir.aboutamazon.com/quarterly-results/default.aspx"
+  
+- company: "Meta Platforms Inc."
+  ticker: "META"
+  urls:
+    - "https://investor.atmeta.com/investor-events/"
+  
+- company: "Tesla Inc."
+  ticker: "TSLA"
+  urls:
+    - "https://ir.tesla.com/"
+  
+- company: "Broadcom Inc."
+  ticker: "AVGO"
+  urls:
+    - "https://investors.broadcom.com/financial-information/quarterly-results"
+  
+- company: "Taiwan Semiconductor Manufacturing"
+  ticker: "TSM"
+  urls:
+    - "https://investor.tsmc.com/english/financial-calendar"
+  
+- company: "Oracle Corporation"
+  ticker: "ORCL"
+  urls:
+    - "https://investor.oracle.com/financials/default.aspx"
+  
+- company: "Salesforce Inc."
+  ticker: "CRM"
+  urls:
+    - "https://investor.salesforce.com/events-and-presentations/default.aspx"
+  
+- company: "Intel Corporation"
+  ticker: "INTC"
+  urls:
+    - "https://www.intc.com/news-events/ir-calendar"
+  
+- company: "Qualcomm Inc."
+  ticker: "QCOM"
+  urls:
+    - "https://investor.qualcomm.com/overview/default.aspx"
+  
+- company: "Micron Technology"
+  ticker: "MU"
+  urls:
+    - "https://investors.micron.com/quarterly-results"
+  
+- company: "Applied Materials Inc."
+  ticker: "AMAT"
+  urls:
+    - "https://ir.appliedmaterials.com/news-releases"
+  
+- company: "ASML Holding"
+  ticker: "ASML"
+  urls:
+    - "https://www.asml.com/en/investors/financial-results"
+  
+- company: "Palantir Technologies"
+  ticker: "PLTR"
+  urls:
+    - "https://investors.palantir.com/events"
+  
+- company: "Super Micro Computer"
+  ticker: "SMCI"
+  urls:
+    - "https://ir.supermicro.com/events-and-presentations/default.aspx"
+  
+- company: "JPMorgan Chase"
+  ticker: "JPM"
+  urls:
+    - "https://www.jpmorganchase.com/ir"
+  
+- company: "Bank of America"
+  ticker: "BAC"
+  urls:
+    - "https://investor.bankofamerica.com/events-and-presentations/presentations"
+  
+- company: "Citigroup Inc."
+  ticker: "C"
+  urls:
+    - "https://www.citigroup.com/global/investors/quarterly-earnings"
+  
+- company: "Goldman Sachs"
+  ticker: "GS"
+  urls:
+    - "https://www.goldmansachs.com/investor-relations/financials/quarterly-earnings-releases"
+  
+- company: "Morgan Stanley"
+  ticker: "MS"
+  urls:
+    - "https://www.morganstanley.com/about-us-ir/earnings-releases"
+  
+- company: "Wells Fargo"
+  ticker: "WFC"
+  urls:
+    - "https://www.wellsfargo.com/about/investor-relations/quarterly-earnings/"
+  
+- company: "PayPal Holdings"
+  ticker: "PYPL"
+  urls:
+    - "https://investor.pypl.com/financials/quarterly-results/default.aspx"
+  
+- company: "Visa Inc."
+  ticker: "V"
+  urls:
+    - "https://investor.visa.com/events-calendar/"
+  
+- company: "Mastercard Inc."
+  ticker: "MA"
+  urls:
+    - "https://investor.mastercard.com/overview/default.aspx"
+  
+- company: "Block Inc."
+  ticker: "SQ"
+  urls:
+    - "https://investors.block.xyz/financials/quarterly-earnings-reports/default.aspx"
+  
+- company: "Seagate Technology"
+  ticker: "STX"
+  urls:
+    - "https://investors.seagate.com/overview/default.aspx"
+  
+- company: "Western Digital"
+  ticker: "WDC"
+  urls:
+    - "https://investor.wdc.com/"
+  
+- company: "Synopsys Inc."
+  ticker: "SNPS"
+  urls:
+    - "https://investor.synopsys.com/financials/quarterly-results/default.aspx"
+  
+- company: "Marvell Technology"
+  ticker: "MRVL"
+  urls:
+    - "https://investor.marvell.com/quarterly-results"
+  
+- company: "Arm Holdings"
+  ticker: "ARM"
+  urls:
+    - "https://investors.arm.com/financials/quarterly-annual-results"

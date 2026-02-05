@@ -1,0 +1,137 @@
+targets:
+  - company: NVIDIA Corporation
+    ticker: NVDA
+    fiscal_year: 2025
+    form: 10-K
+  - company: Advanced Micro Devices
+    ticker: AMD
+    fiscal_year: 2025
+    form: 10-K
+  - company: Microsoft Corporation
+    ticker: MSFT
+    fiscal_year: 2025
+    form: 10-K
+  - company: Apple Inc.
+    ticker: AAPL
+    fiscal_year: 2025
+    form: 10-K
+  - company: Alphabet Inc.
+    ticker: GOOGL
+    fiscal_year: 2025
+    form: 10-K
+  - company: Amazon.com Inc.
+    ticker: AMZN
+    fiscal_year: 2025
+    form: 10-K
+  - company: Meta Platforms Inc.
+    ticker: META
+    fiscal_year: 2025
+    form: 10-K
+  - company: Tesla Inc.
+    ticker: TSLA
+    fiscal_year: 2025
+    form: 10-K
+  - company: Broadcom Inc.
+    ticker: AVGO
+    fiscal_year: 2025
+    form: 10-K
+  - company: Taiwan Semiconductor Manufacturing
+    ticker: TSM
+    fiscal_year: 2025
+    form: 10-K
+  - company: Oracle Corporation
+    ticker: ORCL
+    fiscal_year: 2025
+    form: 10-K
+  - company: Salesforce Inc.
+    ticker: CRM
+    fiscal_year: 2025
+    form: 10-K
+  - company: Intel Corporation
+    ticker: INTC
+    fiscal_year: 2025
+    form: 10-K
+  - company: Qualcomm Inc.
+    ticker: QCOM
+    fiscal_year: 2025
+    form: 10-K
+  - company: Micron Technology
+    ticker: MU
+    fiscal_year: 2025
+    form: 10-K
+  - company: Applied Materials Inc.
+    ticker: AMAT
+    fiscal_year: 2025
+    form: 10-K
+  - company: ASML Holding
+    ticker: ASML
+    fiscal_year: 2025
+    form: 10-K
+  - company: Palantir Technologies
+    ticker: PLTR
+    fiscal_year: 2025
+    form: 10-K
+  - company: Super Micro Computer
+    ticker: SMCI
+    fiscal_year: 2025
+    form: 10-K
+  - company: JPMorgan Chase
+    ticker: JPM
+    fiscal_year: 2025
+    form: 10-K
+  - company: Bank of America
+    ticker: BAC
+    fiscal_year: 2025
+    form: 10-K
+  - company: Citigroup Inc.
+    ticker: C
+    fiscal_year: 2025
+    form: 10-K
+  - company: Goldman Sachs
+    ticker: GS
+    fiscal_year: 2025
+    form: 10-K
+  - company: Morgan Stanley
+    ticker: MS
+    fiscal_year: 2025
+    form: 10-K
+  - company: Wells Fargo
+    ticker: WFC
+    fiscal_year: 2025
+    form: 10-K
+  - company: PayPal Holdings
+    ticker: PYPL
+    fiscal_year: 2025
+    form: 10-K
+  - company: Visa Inc.
+    ticker: V
+    fiscal_year: 2025
+    form: 10-K
+  - company: Mastercard Inc.
+    ticker: MA
+    fiscal_year: 2025
+    form: 10-K
+  - company: Block Inc.
+    ticker: SQ
+    fiscal_year: 2025
+    form: 10-K
+  - company: Seagate Technology
+    ticker: STX
+    fiscal_year: 2025
+    form: 10-K
+  - company: Western Digital
+    ticker: WDC
+    fiscal_year: 2025
+    form: 10-K
+  - company: Synopsys Inc.
+    ticker: SNPS
+    fiscal_year: 2025
+    form: 10-K
+  - company: Marvell Technology
+    ticker: MRVL
+    fiscal_year: 2025
+    form: 10-K
+  - company: Arm Holdings
+    ticker: ARM
+    fiscal_year: 2025
+    form: 10-K
