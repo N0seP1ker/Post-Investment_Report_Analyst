@@ -270,7 +270,7 @@ def save_file(path: Path, content: bytes) -> None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--targets", default="sources_edgar.yaml")
-    ap.add_argument("--out_dir", default="raw")
+    ap.add_argument("--out_dir", default="data/raw")
     ap.add_argument("--manifest", default="data/quarterly_manifest.jsonl")
     ap.add_argument(
         "--user_agent",
@@ -374,11 +374,11 @@ def main():
             # Determine file extension
             ext = "pdf" if not args.no_pdf else "html"
 
-            # Save to raw/{company_name}/{yyyy_qx.pdf}
-            company_dir = out_dir / t.company.replace(" ", "_").replace(".", "")
-            ensure_dir(company_dir)
+            # Save to raw/{ticker}/{yyyy_qx.pdf}
+            ticker_dir = out_dir / t.ticker
+            ensure_dir(ticker_dir)
 
-            save_path = company_dir / f"{quarter_str}.{ext}"
+            save_path = ticker_dir / f"{quarter_str}.{ext}"
 
             # Check if file exists
             if save_path.exists():

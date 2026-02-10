@@ -202,7 +202,7 @@ def save_file(path: Path, content: bytes) -> None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--targets", default="sources_edgar.yaml")
-    ap.add_argument("--out_dir", default="raw")
+    ap.add_argument("--out_dir", default="data/raw")
     ap.add_argument("--manifest", default="data/annual_manifest.jsonl")
     ap.add_argument(
         "--user_agent",
@@ -296,13 +296,13 @@ def main():
                 print(f"[WARN] Download failed {t.ticker} {accession_number}: {e}")
                 continue
 
-            # Save to raw/{company_name}/{yyyy}_10k.html or {yyyy}_20f.html
-            company_dir = out_dir / t.company.replace(" ", "_").replace(".", "")
-            ensure_dir(company_dir)
+            # Save to raw/{ticker}/{yyyy}_10k.html or {yyyy}_20f.html
+            ticker_dir = out_dir / t.ticker
+            ensure_dir(ticker_dir)
 
             # Use form type in filename (10k or 20f)
             form_suffix = t.form.lower().replace("-", "")  # "10-K" -> "10k", "20-F" -> "20f"
-            save_path = company_dir / f"{year_str}_{form_suffix}.html"
+            save_path = ticker_dir / f"{year_str}_{form_suffix}.html"
 
             # Check if file exists
             if save_path.exists():
