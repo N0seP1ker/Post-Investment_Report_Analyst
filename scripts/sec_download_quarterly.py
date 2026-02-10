@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
-Download 10-K annual reports from SEC EDGAR and organize as raw/{company}/{yyyy}_10k.html
+Download quarterly reports (10-Q) from SEC EDGAR and organize as raw/{company}/{yyyy_qx.pdf}
 
 - Reads sources_edgar.yaml for company list
-- Downloads 10-K filings from SEC EDGAR
-- Organizes as: raw/{company_name}/{yyyy}_10k.html
+- Downloads 10-Q filings from SEC EDGAR
+- Converts HTML to PDF using weasyprint or wkhtmltopdf
+- Organizes as: raw/{company_name}/{yyyy}_q{quarter}.pdf
 """
 
 import argparse
 import hashlib
 import json
 import os
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -19,6 +21,25 @@ from typing import Any, Dict, Iterable, List, Optional
 
 import requests
 import yaml
+
+# Try to import PDF conversion libraries
+PDF_CONVERTER = None
+WeasyHTML = None
+pdfkit = None
+
+try:
+    from weasyprint import HTML as WeasyHTML
+    PDF_CONVERTER = "weasyprint"
+except (ImportError, OSError):
+    # OSError can occur on Windows if GTK libraries are missing
+    pass
+
+if not PDF_CONVERTER:
+    try:
+        import pdfkit
+        PDF_CONVERTER = "pdfkit"
+    except (ImportError, OSError):
+        pass
 
 
 TICKER_CIK_JSON = "https://www.sec.gov/files/company_tickers.json"
@@ -42,7 +63,7 @@ def ensure_dir(p: Path) -> None:
 class Target:
     company: str
     ticker: str
-    form: str = "10-K"
+    form: str = "10-Q"
 
 
 class RateLimiter:
@@ -88,13 +109,11 @@ def load_targets(path: Path) -> List[Target]:
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     out: List[Target] = []
     for t in data.get("targets", []):
-        # Get form from config, default to 10-K
-        form = str(t.get("form", "10-K")).strip()
         out.append(
             Target(
                 company=t["company"],
                 ticker=str(t["ticker"]).upper().strip(),
-                form=form,
+                form="10-Q",  # Force 10-Q for quarterly reports
             )
         )
     return out
@@ -179,19 +198,68 @@ def collect_all_filings(
     return deduped
 
 
-def extract_year_from_report_date(report_date: str) -> Optional[str]:
+def extract_quarter_from_report_date(report_date: str) -> Optional[str]:
     """
-    Extract fiscal year from report date (YYYY-MM-DD).
-    Returns: yyyy (e.g., "2025")
+    Extract quarter from report date (YYYY-MM-DD).
+    Returns: yyyy_qX (e.g., "2025_q1")
     """
-    if not report_date or len(report_date) < 4:
+    if not report_date or len(report_date) < 10:
         return None
 
     try:
         year = report_date[:4]
-        return year
+        month = int(report_date[5:7])
+
+        # Map months to quarters
+        if month in [1, 2, 3]:
+            quarter = "q1"
+        elif month in [4, 5, 6]:
+            quarter = "q2"
+        elif month in [7, 8, 9]:
+            quarter = "q3"
+        else:
+            quarter = "q4"
+
+        return f"{year}_{quarter}"
     except (ValueError, IndexError):
         return None
+
+
+def html_to_pdf(html_content: bytes, output_path: Path) -> bool:
+    """Convert HTML to PDF using available converter."""
+    if not PDF_CONVERTER:
+        print("[WARN] No PDF converter available. Install: pip install weasyprint")
+        return False
+
+    try:
+        if PDF_CONVERTER == "weasyprint":
+            # Save HTML temporarily
+            temp_html = output_path.with_suffix('.html')
+            temp_html.write_bytes(html_content)
+
+            # Convert to PDF
+            WeasyHTML(filename=str(temp_html)).write_pdf(str(output_path))
+
+            # Clean up temp HTML
+            temp_html.unlink()
+            return True
+
+        elif PDF_CONVERTER == "pdfkit":
+            # Save HTML temporarily
+            temp_html = output_path.with_suffix('.html')
+            temp_html.write_bytes(html_content)
+
+            # Convert to PDF
+            pdfkit.from_file(str(temp_html), str(output_path))
+
+            # Clean up temp HTML
+            temp_html.unlink()
+            return True
+    except Exception as e:
+        print(f"[ERROR] PDF conversion failed: {e}")
+        return False
+
+    return False
 
 
 def save_file(path: Path, content: bytes) -> None:
@@ -203,7 +271,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--targets", default="sources_edgar.yaml")
     ap.add_argument("--out_dir", default="raw")
-    ap.add_argument("--manifest", default="data/annual_manifest.jsonl")
+    ap.add_argument("--manifest", default="data/quarterly_manifest.jsonl")
     ap.add_argument(
         "--user_agent",
         default=os.getenv("SEC_USER_AGENT", "PostInvestmentAgent (your_email@example.com)"),
@@ -213,8 +281,15 @@ def main():
     ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--max_per_company", type=int, default=0, help="0=all; else limit downloads per company")
     ap.add_argument("--since_year", type=int, default=0, help="0=all years; else only reportDate year >= since_year")
+    ap.add_argument("--no_pdf", action="store_true", help="Save as HTML instead of converting to PDF")
 
     args = ap.parse_args()
+
+    if not args.no_pdf and not PDF_CONVERTER:
+        print("[ERROR] No PDF converter found. Install one:")
+        print("  pip install weasyprint")
+        print("Or use --no_pdf to save HTML files")
+        return
 
     targets_path = Path(args.targets)
     out_dir = Path(args.out_dir)
@@ -228,7 +303,7 @@ def main():
     ticker_to_cik = load_ticker_to_cik(s, limiter)
 
     targets = load_targets(targets_path)
-    print(f"[INFO] Loaded {len(targets)} targets for annual report downloads")
+    print(f"[INFO] Loaded {len(targets)} targets for 10-Q downloads")
 
     downloaded = 0
 
@@ -251,12 +326,12 @@ def main():
             s=s,
             limiter=limiter,
             submissions=submissions,
-            target_form=t.form,
+            target_form="10-Q",
             timeout=args.timeout,
         )
 
         if not filings:
-            print(f"[WARN] No {t.form} filings found for {t.ticker}")
+            print(f"[WARN] No 10-Q filings found for {t.ticker}")
             continue
 
         # Apply optional since_year filter
@@ -269,7 +344,7 @@ def main():
         if args.max_per_company and args.max_per_company > 0:
             filings = filings[: args.max_per_company]
 
-        print(f"[INFO] {t.ticker}: downloading {len(filings)} x {t.form}")
+        print(f"[INFO] {t.ticker}: downloading {len(filings)} x 10-Q")
 
         for f in filings:
             accession_number = f["accessionNumber"]
@@ -278,10 +353,10 @@ def main():
             filing_date = f["filingDate"]
             report_date = f.get("reportDate", "")
 
-            # Extract year info
-            year_str = extract_year_from_report_date(report_date)
-            if not year_str:
-                print(f"[WARN] Could not extract year from {report_date}, skipping")
+            # Extract quarter info
+            quarter_str = extract_quarter_from_report_date(report_date)
+            if not quarter_str:
+                print(f"[WARN] Could not extract quarter from {report_date}, skipping")
                 continue
 
             doc_url = ARCHIVES_PRIMARY_DOC.format(
@@ -296,21 +371,33 @@ def main():
                 print(f"[WARN] Download failed {t.ticker} {accession_number}: {e}")
                 continue
 
-            # Save to raw/{company_name}/{yyyy}_10k.html or {yyyy}_20f.html
+            # Determine file extension
+            ext = "pdf" if not args.no_pdf else "html"
+
+            # Save to raw/{company_name}/{yyyy_qx.pdf}
             company_dir = out_dir / t.company.replace(" ", "_").replace(".", "")
             ensure_dir(company_dir)
 
-            # Use form type in filename (10k or 20f)
-            form_suffix = t.form.lower().replace("-", "")  # "10-K" -> "10k", "20-F" -> "20f"
-            save_path = company_dir / f"{year_str}_{form_suffix}.html"
+            save_path = company_dir / f"{quarter_str}.{ext}"
 
             # Check if file exists
             if save_path.exists():
-                print(f"[INFO] Skipping {t.ticker} {year_str} (already exists)")
+                print(f"[INFO] Skipping {t.ticker} {quarter_str} (already exists)")
                 continue
 
-            save_file(save_path, content)
-            print(f"[OK] Saved {save_path}")
+            # Convert to PDF if needed
+            if not args.no_pdf:
+                print(f"[INFO] Converting {t.ticker} {quarter_str} to PDF...")
+                if html_to_pdf(content, save_path):
+                    print(f"[OK] Saved {save_path}")
+                else:
+                    # Save as HTML if conversion fails
+                    save_path = save_path.with_suffix('.html')
+                    save_file(save_path, content)
+                    print(f"[WARN] Saved as HTML: {save_path}")
+            else:
+                save_file(save_path, content)
+                print(f"[OK] Saved {save_path}")
 
             # Log to manifest
             record = {
@@ -318,10 +405,10 @@ def main():
                 "company": t.company,
                 "ticker": t.ticker,
                 "cik": str(cik),
-                "form": t.form,
+                "form": "10-Q",
                 "report_date": report_date,
                 "filing_date": filing_date,
-                "fiscal_year": year_str,
+                "quarter": quarter_str,
                 "accession_number": accession_number,
                 "primary_document": primary_doc,
                 "download_url": doc_url,
@@ -333,7 +420,9 @@ def main():
 
             downloaded += 1
 
-    print(f"\n[DONE] Downloaded {downloaded} annual reports. Manifest: {manifest_path}")
+    print(f"\n[DONE] Downloaded {downloaded} quarterly reports. Manifest: {manifest_path}")
+    if not args.no_pdf and PDF_CONVERTER:
+        print(f"[INFO] Using PDF converter: {PDF_CONVERTER}")
 
 
 if __name__ == "__main__":
